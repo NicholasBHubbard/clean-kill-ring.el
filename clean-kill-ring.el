@@ -20,18 +20,18 @@
 ;;; Code:
 
 (defcustom clean-kill-ring-filters '(string-blank-p)
-  "List of functions for cleaning the KILL-RING."
+  "List of functions for cleaning the `kill-ring'."
   :type '(repeat function)
   :group 'clean-kill-ring-mode)
 
 (defcustom clean-kill-ring-remove-duplicates nil
-  "Non-nil means prevent duplicate items from entering the KILL-RING."
+  "Non-nil means prevent duplicate items from entering the `kill-ring'."
   :type 'boolean
   :group 'clean-kill-ring-mode)
 
 (defun clean-kill-ring-filter-catch-p (string)
   "T if at least one of the filters in `clean-kill-ring-filters' returns a true
-value when applied to the KILL-RING member STRING, and NIL otherwise."
+value when applied to the `kill-ring' member STRING, and NIL otherwise."
   (let ((caught nil)
         (s (substring-no-properties string)))
     (catch 'loop
@@ -42,11 +42,11 @@ value when applied to the KILL-RING member STRING, and NIL otherwise."
     caught))
 
 (defun clean-kill-ring (&optional remove-dups)
-  "Clean the KILL-RING by removing any values that satisfy a filter in
+  "Clean the `kill-ring' by removing any values that satisfy a filter in
 `clean-kill-ring-filters'.
 
 If REMOVE-DUPS or `clean-kill-ring-remove-duplicates' is non-nil, or if called
-interactively then remove duplicate items from the KILL-RING."
+interactively then remove duplicate items from the `kill-ring'."
   (interactive (list t))
   (let ((new-kill-ring nil)
         (this-kill-ring-member nil)
@@ -61,11 +61,11 @@ interactively then remove duplicate items from the KILL-RING."
       (setq kill-ring new-kill-ring))))
 
 (defun clean-kill-ring-clean-most-recent-entry ()
-  "If the most recent entry in KILL-RING satisfies one of the filters in
+  "If the most recent entry in `kill-ring' satisfies one of the filters in
 `clean-kill-ring-filters' then remove it.
 
 If `clean-kill-ring-remove-duplicates' is non-nil then remove all items from
-the KILL-RING that are `string=' to the most recent entry."
+the `kill-ring' that are `string=' to the most recent entry."
   (let ((most-recent (car kill-ring)))
     (if (clean-kill-ring-filter-catch-p most-recent)
         (pop kill-ring)
@@ -87,7 +87,7 @@ the KILL-RING that are `string=' to the most recent entry."
   "Toggle clean-kill-ring-mode.
 
 When active prevent strings that satisfy at least one predicate in 
-`clean-kill-ring-filters' from entering the KILL-RING."
+`clean-kill-ring-filters' from entering the `kill-ring'."
   :global t
   :require 'clean-kill-ring
   :keymap clean-kill-ring-mode-map
