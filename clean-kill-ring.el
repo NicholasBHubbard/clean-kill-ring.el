@@ -75,7 +75,7 @@ the `kill-ring' that are `string=' to the most recent entry."
               (i (1- (length kill-ring))))
           (while (>= i 0)
             (setq this-kill-ring-member (nth i kill-ring))
-            (unless (or (= i 0) (string= most-recent this-kill-ring-member))
+            (when (or (= i 0) (not (string= most-recent this-kill-ring-member)))
               (push this-kill-ring-member new-kill-ring))
             (setq i (1- i)))
           (setq kill-ring new-kill-ring))))))
