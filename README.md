@@ -17,7 +17,7 @@ then upon killing text that already exists in =kill-ring=, the old duplicate
 entries will be removed.
 
 To manually clean the =kill-ring=, call the interactive function
-=clean-kill-ring=.
+=clean-kill-ring-clean=.
 
 * Installation
 

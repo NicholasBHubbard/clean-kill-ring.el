@@ -41,7 +41,7 @@ value when applied to the `kill-ring' member STRING, and NIL otherwise."
           (throw 'loop t))))
     caught))
 
-(defun clean-kill-ring (&optional remove-dups)
+(defun clean-kill-ring-clean (&optional remove-dups)
   "Clean the `kill-ring' by removing any values that satisfy a filter in
 `clean-kill-ring-filters'.
 
