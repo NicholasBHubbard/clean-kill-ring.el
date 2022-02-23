@@ -2,6 +2,10 @@
 #+title: clean-kill-ring.el 
 #+author: Nicholas Hubbard
 
+* Disclaimer
+
+This package is still under development.
+
 * Usage
 
 When the minor-mode =clean-kill-ring-mode= is enabled, any string that
