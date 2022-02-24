@@ -24,7 +24,7 @@
   :type '(repeat function)
   :group 'clean-kill-ring-mode)
 
-(defcustom clean-kill-ring-remove-duplicates nil
+(defcustom clean-kill-ring-prevent-duplicates nil
   "Non-nil means prevent duplicate items from entering the `kill-ring'."
   :type 'boolean
   :group 'clean-kill-ring-mode)
@@ -45,7 +45,7 @@ value when applied to the `kill-ring' member STRING, and NIL otherwise."
   "Clean the `kill-ring' by removing any values that satisfy a filter in
 `clean-kill-ring-filters'.
 
-If REMOVE-DUPS or `clean-kill-ring-remove-duplicates' is non-nil, or if called
+If REMOVE-DUPS or `clean-kill-ring-prevent-duplicates' is non-nil, or if called
 interactively then remove duplicate items from the `kill-ring'."
   (interactive (list t))
   (let ((new-kill-ring nil)
@@ -56,7 +56,7 @@ interactively then remove duplicate items from the `kill-ring'."
       (unless (clean-kill-ring-filter-catch-p this-kill-ring-member)
         (push this-kill-ring-member new-kill-ring))
       (setq i (1- i)))
-    (if (or remove-dups clean-kill-ring-remove-duplicates)
+    (if (or remove-dups clean-kill-ring-prevent-duplicates)
         (setq kill-ring (delete-dups new-kill-ring))
       (setq kill-ring new-kill-ring))))
 
@@ -64,12 +64,12 @@ interactively then remove duplicate items from the `kill-ring'."
   "If the most recent entry in `kill-ring' satisfies one of the filters in
 `clean-kill-ring-filters' then remove it.
 
-If `clean-kill-ring-remove-duplicates' is non-nil then remove all items from
+If `clean-kill-ring-prevent-duplicates' is non-nil then remove all items from
 the `kill-ring' that are `string=' to the most recent entry."
   (let ((most-recent (car kill-ring)))
     (if (clean-kill-ring-filter-catch-p most-recent)
         (pop kill-ring)
-      (when clean-kill-ring-remove-duplicates
+      (when clean-kill-ring-prevent-duplicates
         (let ((new-kill-ring nil)
               (this-kill-ring-member nil)
               (i (1- (length kill-ring))))
