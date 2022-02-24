@@ -94,15 +94,11 @@ When active prevent strings that satisfy at least one predicate in
   (if clean-kill-ring-mode
       (progn
         (clean-kill-ring-clean)
-        (advice-add 'kill-new :after #'(lambda (&rest args)
-                                         (progn
-                                           (ignore args)
-                                           (clean-kill-ring-clean-most-recent-entry)))))
+        (advice-add 'kill-new :after '(lambda (&rest _args)
+                                        (clean-kill-ring-clean-most-recent-entry))))
     
-    (advice-remove 'kill-new #'(lambda (&rest args)
-                                 (progn
-                                   (ignore args)
-                                   (clean-kill-ring-clean-most-recent-entry))))))
+    (advice-remove 'kill-new '(lambda (&rest _args)
+                                (clean-kill-ring-clean-most-recent-entry)))))
 
 (provide 'clean-kill-ring)
 
