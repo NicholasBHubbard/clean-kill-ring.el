@@ -78,7 +78,8 @@ the `kill-ring' that are `string=' to the most recent entry."
             (when (or (= i 0) (not (string= most-recent this-kill-ring-member)))
               (push this-kill-ring-member new-kill-ring))
             (setq i (1- i)))
-          (setq kill-ring new-kill-ring))))))
+          (setq kill-ring new-kill-ring)
+          (setq kill-ring-yank-pointer kill-ring))))))
 
 (defvar clean-kill-ring-mode-map (make-sparse-keymap)
   "Keymap for clean-kill-ring-mode")
