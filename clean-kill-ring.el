@@ -4,6 +4,8 @@
 ;;
 ;; Licensed under the same terms as Emacs and under the MIT license.
 
+;; SPDX-License-Identifier: MIT
+
 ;; Author: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; URL: http://github.com/NicholasBHubbard/clean-kill-ring.el
 ;; Package-Requires: ((emacs "24.4"))
@@ -30,8 +32,7 @@
   :group 'clean-kill-ring-mode)
 
 (defun clean-kill-ring-filter-catch-p (string)
-  "T if at least one of the filters in `clean-kill-ring-filters' returns a true
-value when applied to the `kill-ring' member STRING, and NIL otherwise."
+  "T if STRING satisfies at least one of `clean-kill-ring-filters'."
   (let ((caught nil)
         (s (substring-no-properties string)))
     (catch 'loop
@@ -42,8 +43,7 @@ value when applied to the `kill-ring' member STRING, and NIL otherwise."
     caught))
 
 (defun clean-kill-ring-clean (&optional remove-dups)
-  "Clean the `kill-ring' by removing any values that satisfy a filter in
-`clean-kill-ring-filters'.
+  "Remove `kill-ring' members that satisfy one of`clean-kill-ring-filters'.
 
 If REMOVE-DUPS or `clean-kill-ring-prevent-duplicates' is non-nil, or if called
 interactively then remove duplicate items from the `kill-ring'."
@@ -61,8 +61,7 @@ interactively then remove duplicate items from the `kill-ring'."
       (setq kill-ring new-kill-ring))))
 
 (defun clean-kill-ring-clean-most-recent-entry ()
-  "If the most recent entry in `kill-ring' satisfies one of the filters in
-`clean-kill-ring-filters' then remove it.
+  "Remove head of `kill-ring' if it satisfies one of `clean-kill-ring-filters'.
 
 If `clean-kill-ring-prevent-duplicates' is non-nil then remove all items from
 the `kill-ring' that are `string=' to the most recent entry."
@@ -82,24 +81,25 @@ the `kill-ring' that are `string=' to the most recent entry."
     (setq kill-ring-yank-pointer kill-ring)))
 
 (defvar clean-kill-ring-mode-map (make-sparse-keymap)
-  "Keymap for clean-kill-ring-mode")
+  "Keymap for `clean-kill-ring-mode'.")
 
 (define-minor-mode clean-kill-ring-mode
-  "Toggle clean-kill-ring-mode.
+  "Toggle `clean-kill-ring-mode'.
 
-When active prevent strings that satisfy at least one predicate in 
+When active prevent strings that satisfy at least one predicate in
 `clean-kill-ring-filters' from entering the `kill-ring'."
   :global t
+  :group 'clean-kill-ring-mode
   :require 'clean-kill-ring
   :keymap clean-kill-ring-mode-map
   (if clean-kill-ring-mode
       (progn
         (clean-kill-ring-clean)
-        (advice-add 'kill-new :after '(lambda (&rest _args)
-                                        (clean-kill-ring-clean-most-recent-entry))))
+        (advice-add 'kill-new :after #'(lambda (&rest _args)
+                                         (clean-kill-ring-clean-most-recent-entry))))
     
-    (advice-remove 'kill-new '(lambda (&rest _args)
-                                (clean-kill-ring-clean-most-recent-entry)))))
+    (advice-remove 'kill-new #'(lambda (&rest _args)
+                                 (clean-kill-ring-clean-most-recent-entry)))))
 
 (provide 'clean-kill-ring)
 
