@@ -21,41 +21,7 @@ To manually clean the =kill-ring=, call the interactive function
 
 * Installation
 
-*** MELPA
-
-This library is not on MELPA yet.
-
-*** Quelpa
-
-#+BEGIN_SRC
-(use-package clean-kill-ring
-  :quelpa (clean-kill-ring :fetcher github :repo "NicholasBHubbard/clean-kill-ring.el")
-  :config
-  (clean-kill-ring-mode 1))
-#+END_SRC
-
-*** Straight
-
-#+BEGIN_SRC 
-(use-package clean-kill-ring
-  :straight (clean-kill-ring :type git :host github :repo "NicholasBHubbard/clean-kill-ring.el")
-  :config
-  (clean-kill-ring-mode 1))
-#+END_SRC
-
-*** Manual
-
-Put =clean-kill-ring.el= in your =load-path=, then:
-
-#+BEGIN_SRC
-(require 'clean-kill-ring)
-
-(clean-kill-ring-mode 1)
-#+END_SRC
-
-* Implementation
-
-When =clean-kill-ring-mode= is active the function =kill-new= is advised.
+This library is available on MELPA.
 
 * License
 
