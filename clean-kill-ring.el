@@ -61,9 +61,9 @@ the `kill-ring'."
         (unwind-protect
             (progn
               (fset 'add-to-history #'ignore)
-              (funcall orig-fn args))
+              (apply orig-fn args))
           (fset 'add-to-history add-to-history))
-      (funcall orig-fn args))))
+      (apply orig-fn args))))
 
 (defvar clean-kill-ring-mode-map (make-sparse-keymap)
   "Keymap for `clean-kill-ring-mode'.")
