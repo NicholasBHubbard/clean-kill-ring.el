@@ -66,7 +66,6 @@ When active prevent strings that satisfy at least one predicate in
   :keymap clean-kill-ring-mode-map
   (if clean-kill-ring-mode
       (progn
-        (clean-kill-ring-clean)
         (advice-add 'kill-new :around #'clean-kill-ring--kill-new-advice))
     (advice-remove 'kill-new #'clean-kill-ring--kill-new-advice)))
 
