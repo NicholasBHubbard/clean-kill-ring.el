@@ -55,7 +55,7 @@
 
 Prevents input that matches any of the `clean-kill-ring-filters' from entering
 the `kill-ring'."
-  (let ((input (car args))
+  (let ((input (substring-no-properties (car args)))
         (add-to-history (symbol-function 'add-to-history)))
     (if (clean-kill-ring--filter-catch-p input)
         (unwind-protect
