@@ -9,7 +9,7 @@
 ;; Author: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; URL: http://github.com/NicholasBHubbard/clean-kill-ring.el
 ;; Package-Requires: ((emacs "24.4"))
-;; Version: 1.2
+;; Version: 2.0
 ;; Created: 2022-02-23
 ;; By: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; Keywords: kill-ring, convenience
@@ -36,19 +36,6 @@
           (setq caught t)
           (throw 'loop t))))
     caught))
-
-(defun clean-kill-ring-clean ()
-  "Remove `kill-ring' members that satisfy one of `clean-kill-ring-filters'."
-  (interactive)
-  (let ((new-kill-ring nil)
-        (this-kill-ring-member nil)
-        (i (1- (length kill-ring))))
-    (while (>= i 0)
-      (setq this-kill-ring-member (nth i kill-ring))
-      (unless (clean-kill-ring--filter-catch-p this-kill-ring-member)
-        (push this-kill-ring-member new-kill-ring))
-      (setq i (1- i)))
-    (setq kill-ring new-kill-ring)))
 
 (defun clean-kill-ring--kill-new-advice (orig-fn &rest args)
   "Advice to `kill-new' when `clean-kill-ring-mode' is enabled.
