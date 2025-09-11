@@ -14,7 +14,7 @@ By default =clean-kill-ring-filters= only contains the predicate
 
 * Installation
 
-This library is available on MELPA.
+This package is available on MELPA.
 
 * License
 
