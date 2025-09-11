@@ -1,6 +1,6 @@
 ;;; clean-kill-ring.el --- Keep the kill ring clean  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2022 Nicholas Hubbard <nicholashubbard@posteo.net>
+;; Copyright (C) 2025 Nicholas Hubbard <nicholashubbard@posteo.net>
 ;;
 ;; Licensed under the same terms as Emacs and under the MIT license.
 
@@ -9,7 +9,7 @@
 ;; Author: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; URL: http://github.com/NicholasBHubbard/clean-kill-ring.el
 ;; Package-Requires: ((emacs "24.4"))
-;; Version: 1.1
+;; Version: 1.2
 ;; Created: 2022-02-23
 ;; By: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; Keywords: kill-ring, convenience
@@ -22,16 +22,11 @@
 ;;; Code:
 
 (defcustom clean-kill-ring-filters '(string-blank-p)
-  "List of functions for cleaning the `kill-ring'."
+  "List of filter functions that if matched keep input out of the `kill-ring'."
   :type '(repeat function)
   :group 'clean-kill-ring-mode)
 
-(defcustom clean-kill-ring-prevent-duplicates nil
-  "Non-nil means prevent duplicate items from entering the `kill-ring'."
-  :type 'boolean
-  :group 'clean-kill-ring-mode)
-
-(defun clean-kill-ring-filter-catch-p (string)
+(defun clean-kill-ring--filter-catch-p (string)
   "T if STRING satisfies at least one of `clean-kill-ring-filters'."
   (let ((caught nil)
         (s (substring-no-properties string)))
@@ -42,43 +37,33 @@
           (throw 'loop t))))
     caught))
 
-(defun clean-kill-ring-clean (&optional remove-dups)
-  "Remove `kill-ring' members that satisfy one of`clean-kill-ring-filters'.
-
-If REMOVE-DUPS or `clean-kill-ring-prevent-duplicates' is non-nil, or if called
-interactively then remove duplicate items from the `kill-ring'."
-  (interactive (list t))
+(defun clean-kill-ring-clean ()
+  "Remove `kill-ring' members that satisfy one of `clean-kill-ring-filters'."
+  (interactive)
   (let ((new-kill-ring nil)
         (this-kill-ring-member nil)
         (i (1- (length kill-ring))))
     (while (>= i 0)
       (setq this-kill-ring-member (nth i kill-ring))
-      (unless (clean-kill-ring-filter-catch-p this-kill-ring-member)
+      (unless (clean-kill-ring--filter-catch-p this-kill-ring-member)
         (push this-kill-ring-member new-kill-ring))
       (setq i (1- i)))
-    (if (or remove-dups clean-kill-ring-prevent-duplicates)
-        (setq kill-ring (delete-dups new-kill-ring))
-      (setq kill-ring new-kill-ring))))
+    (setq kill-ring new-kill-ring)))
 
-(defun clean-kill-ring-clean-most-recent-entry ()
-  "Remove head of `kill-ring' if it satisfies one of `clean-kill-ring-filters'.
+(defun clean-kill-ring--kill-new-advice (orig-fn &rest args)
+  "Advice to `kill-new' when `clean-kill-ring-mode' is enabled.
 
-If `clean-kill-ring-prevent-duplicates' is non-nil then remove all items from
-the `kill-ring' that are `string=' to the most recent entry."
-  (let ((most-recent (car kill-ring)))
-    (if (clean-kill-ring-filter-catch-p most-recent)
-        (pop kill-ring)
-      (when clean-kill-ring-prevent-duplicates
-        (let ((new-kill-ring nil)
-              (this-kill-ring-member nil)
-              (i (1- (length kill-ring))))
-          (while (>= i 0)
-            (setq this-kill-ring-member (nth i kill-ring))
-            (when (or (= i 0) (not (string= most-recent this-kill-ring-member)))
-              (push this-kill-ring-member new-kill-ring))
-            (setq i (1- i)))
-          (setq kill-ring new-kill-ring))))
-    (setq kill-ring-yank-pointer kill-ring)))
+Prevents input that matches any of the `clean-kill-ring-filters' from entering
+the `kill-ring'."
+  (let ((input (car args))
+        (add-to-history (symbol-function 'add-to-history)))
+    (if (clean-kill-ring--filter-catch-p input)
+        (unwind-protect
+            (progn
+              (fset 'add-to-history #'ignore)
+              (funcall orig-fn args))
+          (fset 'add-to-history add-to-history))
+      (funcall orig-fn args))))
 
 (defvar clean-kill-ring-mode-map (make-sparse-keymap)
   "Keymap for `clean-kill-ring-mode'.")
@@ -95,11 +80,8 @@ When active prevent strings that satisfy at least one predicate in
   (if clean-kill-ring-mode
       (progn
         (clean-kill-ring-clean)
-        (advice-add 'kill-new :after #'(lambda (&rest _args)
-                                         (clean-kill-ring-clean-most-recent-entry))))
-    
-    (advice-remove 'kill-new #'(lambda (&rest _args)
-                                 (clean-kill-ring-clean-most-recent-entry)))))
+        (advice-add 'kill-new :around #'clean-kill-ring--kill-new-advice))
+    (advice-remove 'kill-new #'clean-kill-ring--kill-new-advice)))
 
 (provide 'clean-kill-ring)
 
