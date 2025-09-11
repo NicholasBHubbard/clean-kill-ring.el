@@ -12,13 +12,6 @@ By default =clean-kill-ring-filters= only contains the predicate
 =string-blank-p=, which means that no blank lines will be allowed into the
 =kill-ring=.
 
-If the variable =clean-kill-ring-prevent-duplicates= is set to a non-nil value
-then upon killing text that already exists in =kill-ring=, the old duplicate
-entries will be removed.
-
-To manually clean the =kill-ring=, call the interactive function
-=clean-kill-ring-clean=.
-
 * Installation
 
 This library is available on MELPA.
