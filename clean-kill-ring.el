@@ -9,7 +9,7 @@
 ;; Author: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; URL: http://github.com/NicholasBHubbard/clean-kill-ring.el
 ;; Package-Requires: ((emacs "24.4"))
-;; Version: 2.0
+;; Version: 2.4
 ;; Created: 2022-02-23
 ;; By: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; Keywords: kill-ring, convenience
@@ -57,7 +57,6 @@ When active prevent strings that satisfy at least one predicate in
   :global t
   :group 'clean-kill-ring-mode
   :require 'clean-kill-ring
-  :keymap clean-kill-ring-mode-map
   (if clean-kill-ring-mode
       (progn
         (advice-add 'kill-new :around #'clean-kill-ring--kill-new-advice))
