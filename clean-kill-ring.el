@@ -58,8 +58,7 @@ When active prevent strings that satisfy at least one predicate in
   :group 'clean-kill-ring-mode
   :require 'clean-kill-ring
   (if clean-kill-ring-mode
-      (progn
-        (advice-add 'kill-new :around #'clean-kill-ring--kill-new-advice))
+      (advice-add 'kill-new :around #'clean-kill-ring--kill-new-advice)
     (advice-remove 'kill-new #'clean-kill-ring--kill-new-advice)))
 
 (provide 'clean-kill-ring)
