@@ -9,7 +9,7 @@
 ;; Author: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; URL: http://github.com/NicholasBHubbard/clean-kill-ring.el
 ;; Package-Requires: ((emacs "24.4"))
-;; Version: 2.5
+;; Version: 2.6
 ;; Created: 2022-02-23
 ;; By: Nicholas Hubbard <nicholashubbard@posteo.net>
 ;; Keywords: kill-ring, convenience
@@ -43,8 +43,8 @@
 Prevents input that matches any of the `clean-kill-ring-filters' from entering
 the `kill-ring'."
   (let ((input (substring-no-properties (car args))))
-    (unless (or (string-empty-p input)
-                (clean-kill-ring--filter-catch-p input))
+    (when (or (not (clean-kill-ring--filter-catch-p input))
+              (string-empty-p input))
       (apply orig-fn args))))
 
 (defvar clean-kill-ring-mode-map (make-sparse-keymap)
