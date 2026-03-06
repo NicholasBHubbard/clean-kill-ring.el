@@ -43,8 +43,7 @@
 Prevents input that matches any of the `clean-kill-ring-filters' from entering
 the `kill-ring'."
   (let ((input (substring-no-properties (car args))))
-    (when (or (not (clean-kill-ring--filter-catch-p input))
-              (string-empty-p input))
+    (when (not (clean-kill-ring--filter-catch-p input))
       (apply orig-fn args))))
 
 (defvar clean-kill-ring-mode-map (make-sparse-keymap)
